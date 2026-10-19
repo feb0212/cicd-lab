@@ -64,3 +64,37 @@ jobs:
           tags: |
             ${{ steps.img.outputs.name }}:${{ github.sha }}
             ${{ steps.img.outputs.name }}:main
+
+  deploy-dev:
+    needs: push
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: true
+
+      - name: Kustomize 설치
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh | bash
+          sudo mv kustomize /usr/local/bin/kustomize
+
+      - name: dev 이미지 태그 갱신
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}/web"
+          cd deploy/overlays/dev
+          kustomize edit set image "todo-web=${IMAGE}:${GITHUB_SHA}"
+
+      - name: 변경사항 커밋 및 push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add deploy/overlays/dev/kustomization.yaml
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "deploy(dev): web ${GITHUB_SHA}"
+            git push
+          fi
