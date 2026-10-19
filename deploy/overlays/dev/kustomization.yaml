@@ -11,4 +11,4 @@ images:
   newTag: jenkins-2
 - name: todo-web
   newName: ghcr.io/feb0212/cicd-lab/web
-  newTag: ebb4d59c819761885a58ef69e4e52cb7d51ae13d
+  newTag: e67c0c8c5c10bfe4790aac26fbc95d4dafca889f
