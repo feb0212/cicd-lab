@@ -11,4 +11,4 @@ images:
   newTag: main
 - name: todo-web
   newName: ghcr.io/feb0212/cicd-lab/web
-  newTag: e67c0c8c5c10bfe4790aac26fbc95d4dafca889f
+  newTag: main
